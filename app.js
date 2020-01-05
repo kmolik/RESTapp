@@ -4,7 +4,7 @@ const bodyparser = require('body-parser');
 
 const app = express();
 
-app.use(bodyparser.json);
+app.use(bodyparser.json());
 
 
 const db = mysql.createConnection({
@@ -23,10 +23,10 @@ db.connect((err) => {
 });
 
 
-app.get('/wyniki',(req, res)=>{
-  db.query('SELECT * FROM wyniki',(err, rows, fields)=>{
+app.get('/scores',(req, res, next)=>{
+  db.query('SELECT * FROM wyniki',(err, result, fields)=>{
     if (!err) {
-      res.send(rows);
+      res.send(result);
     }
     else{ 
       console.log(err);
@@ -34,14 +34,49 @@ app.get('/wyniki',(req, res)=>{
   })
 });
 
-
-app.get('/sportowiec', function(req, res, next){
-      db.query("SELECT * FROM sportowiec", function (err, result, fields) {
-        if (err) throw err;
-        res.json({
-          'status': result
-        });
-      });
+app.get('/contestant', (req, res, next) => {
+      db.query('SELECT * FROM sportowiec', (err, result, fields) => {
+        if (!err){
+          res.send(result);
+        }
+        else{
+          console.log(err);
+        }
+      })
     });
+
+    app.get('/contestant/:id', (req, res, next) => {
+      db.query('SELECT * FROM sportowiec WHERE id = ?',[req.params.id], (err, result, fields) => {
+        if (!err){
+          res.send(result);
+        }
+        else{
+          console.log(err);
+        }
+      })
+    });
+
+    app.delete('/contestant/:id', (req, res, next) => {
+      db.query('DELETE FROM sportowiec WHERE id = ?',[req.params.id], (err, result, fields) => {
+        if (!err){
+          res.send('Deleted successfully.')
+        }
+        else{
+          console.log(err);
+        }
+      })
+    });
+/*
+    app.insert('/contestant/:id', (req, res, next) => {
+      db.query('DELETE FROM sportowiec WHERE id = ?',[req.params.id], (err, result, fields) => {
+        if (!err){
+          res.send('Deleted successfully.')
+        }
+        else{
+          console.log(err);
+        }
+      })
+    });
+*/
 
 app.listen(8080,()=>console.log('Server is running at port 8080'));
