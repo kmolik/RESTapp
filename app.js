@@ -11,7 +11,8 @@ const db = mysql.createConnection({
     host: '127.0.0.1',
     user: 'root',
     password: '',
-    database: 'strona'
+    database: 'strona',
+    multipleStatements: true
 });
 
 db.connect((err) => {
@@ -66,17 +67,19 @@ app.get('/contestant', (req, res, next) => {
         }
       })
     });
-/*
-    app.insert('/contestant/:id', (req, res, next) => {
-      db.query('DELETE FROM sportowiec WHERE id = ?',[req.params.id], (err, result, fields) => {
+
+    app.post('/contestant/post', (req, res, next) => {
+      let emp = req.body;
+      var sql = "SET @id =?; SET @imie = ?; SET @nazwisko = ?";
+      db.query(sql, [emp.id, emp.imie, emp.nazwisko],  (err, result, fields) => {
         if (!err){
-          res.send('Deleted successfully.')
+          console.log(typeof req.body);
         }
         else{
           console.log(err);
         }
       })
     });
-*/
+
 
 app.listen(8080,()=>console.log('Server is running at port 8080'));
