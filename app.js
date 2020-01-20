@@ -69,16 +69,20 @@ app.get('/contestant', (req, res, next) => {
     });
 
     app.post('/contestant/post', (req, res, next) => {
-      let emp = req.body;
-      var sql = "SET @id =?; SET @imie = ?; SET @nazwisko = ?";
-      db.query(sql, [emp.id, emp.imie, emp.nazwisko],  (err, result, fields) => {
-        if (!err){
-          console.log(typeof req.body);
-        }
-        else{
-          console.log(err);
-        }
-      })
+    var createContestant = {
+      id: req.body.id,
+      imie: req.body.imie,
+      nazwisko: req.body.nazwisko
+    } 
+    db.query('INSERT INTO sportowiec SET ?', createContestant, (err,result, fields) => {
+      if(!err){
+        console.log('Data sended!');
+        res.send('Record added!');
+      }
+      else{
+        console.log(err);
+      }
+    });
     });
 
 
